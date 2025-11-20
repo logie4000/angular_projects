@@ -20,8 +20,10 @@ export class CharNode {
         var p = this.parent;
 
         if (p === undefined) {
+            // We reached the root of the tree, so we're valid all the way down.
             return true;
         } else if (p.pos < this.pos) {
+            // This node is valid, so check the parent node all the way up to the root of the tree.
             return p.isValid();
         } else {
             return false;
