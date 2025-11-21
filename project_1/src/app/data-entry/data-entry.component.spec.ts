@@ -21,13 +21,32 @@ describe('DataEntryComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should calculate zero for empty strings', () => {
+    component.testString.set('');
+    component.targetString.set('ABCBABC');
+
+    expect(component.result()).toEqual(0);
+
+    component.testString.set('ABC');
+    component.targetString.set('');
+
+    expect(component.result()).toEqual(0);
+  })
+
   it('should calculate the correct answer', () => {
     component.testString.set('ABC');
     component.targetString.set('ABCBABC');
 
-    var root = component.buildTree();
-    var result = component.calculateResult(root);
+    expect(component.result()).toEqual(5);
 
-    expect(result).toEqual(5);
+    component.testString.set('A');
+    component.targetString.set('ABCBABC');
+
+    expect(component.result()).toEqual(2);
+
+    component.testString.set('ABC');
+    component.targetString.set('CABBAB');
+
+    expect(component.result()).toEqual(0);
   })
 });

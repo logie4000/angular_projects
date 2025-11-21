@@ -1,4 +1,4 @@
-import { Component, OnChanges, signal, SimpleChanges } from '@angular/core';
+import { Component, computed, OnChanges, signal, SimpleChanges } from '@angular/core';
 import { CharNode } from '../models/char-node';
 import { FormsModule } from '@angular/forms';
 
@@ -9,23 +9,41 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './data-entry.component.html',
   styleUrl: './data-entry.component.css'
 })
-export class DataEntryComponent implements OnChanges{
+export class DataEntryComponent {
 
   testString = signal<string>('');
   targetString = signal<string>('');
-  result = signal<number>(-1);
+  
+  root = computed<CharNode>(() => {
+    return this.buildTree();
+  })
+  result = computed<number>(() =>
+  {
+    if (this.testString() === '' || this.targetString() === '') {
+      return 0;
+    }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.doUpdate();
-  }
+    return this.calculateResult(this.root());
+  });
 
-  doUpdate() {
-    this.result.update(() => {
-      var root = this.buildTree();
-      return this.calculateResult(root);
-    });
-  }
+  /* Build a tree of all of the different possible character location combinations. Valid combinations will be a path from parent node 
+     through each child node with each node's position value being greater than the parent's.
 
+    Example:
+      Test string: ABC
+      Target string: ABCBABC
+
+      A: [0, 4]
+      B: [1, 3, 5]
+      C: [2, 6]
+
+      Root:                X
+      A:           0               4
+                /  |  \        /   |   \
+      B:      1    3    5     1    3    5
+             / \  / \  / \   / \  / \  / \  
+      C:     2 6  2 6  2 6   2 6  2 6  2 6
+  IsValid:   T T  F T  F T   F F  F F  F T  => 5    */
   buildTree(): CharNode {
     var chars = this.testString().split('')
     var target = this.targetString().split('')
