@@ -62,7 +62,8 @@ export class DataEntryComponent {
       });
 
       // Add a node for each found character position within the target string.
-      // The newly created nodes will become the new set of parents when adding the next level of nodes.
+      // The newly created nodes will become the new set of parents when adding the next level of nodes
+      // so that every set of new nodes is added to each node of the previous level.
       parents = this.addChildNodes(positions, parents);
     });
 
